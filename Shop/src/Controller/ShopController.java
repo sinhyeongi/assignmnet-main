@@ -14,7 +14,7 @@ public class ShopController {
 	private ItemDAO item;
 	private FileManager f;
 	private InnputManger inp;
-	private String name;
+	private String id;
 
 	public ShopController() {
 		// TODO Auto-generated constructor stub
@@ -22,7 +22,8 @@ public class ShopController {
 		inp = InnputManger.getInstance();
 		user = UserDAO.getInstance();
 		item = ItemDAO.getInstance();
-		name = "";
+		id = "";
+		LoadData();
 	}
 
 	// 메인 실행 부분
@@ -52,7 +53,7 @@ public class ShopController {
 	// 첫 시작 페이지 메뉴
 	private void FirstMenu() {
 		while (true) {
-			if (user.getIdIdx(name) != -1) {
+			if (user.getIdIdx(id) != -1) {
 				printUser();
 			}
 			int inp = this.inp.getInt("[1.가입] [2.탈퇴] [3.로그인] [4.로그아웃]" + "\n[100.관리자] [0.종료] ");
@@ -75,35 +76,42 @@ public class ShopController {
 					System.err.println("no data");
 					continue;
 				}
-				String id = this.inp.getString("[가입]아이디 입력");
+				String id = this.inp.getString("[탈퇴]아이디 입력");
 				if (user.getIdIdx(id) == -1) {
 					System.err.println("[탈퇴]아이디를 확인하세요");
 					continue;
 				}
-
+				String pw = this.inp.getString("[탈퇴]비밀번호 입력");
+				this.id = user.getUserIdx(id, pw);
+				if(this.id.isBlank()) {
+					System.err.println("[탈퇴]아이디 또는 비밀 번호를 확인 하세요");
+					continue;
+				}
+				item.DeleCartData(id);
+				user.DeleteUser(user.getIdIdx(this.id));
 			} else if (inp == 3) {
 				if (user.getCountUser() == 0) {
 					System.out.println("no data");
 					continue;
-				} else if (user.getIdIdx(name) == -1) {
+				} else if (user.getIdIdx(this.id) == -1) {
 					String id = this.inp.getString("[로그인]아이디 입력");
 					String pw = this.inp.getString("[로그인]비밀번호 입력");
-					name = user.getUserIdx(id, pw);
-					if (name.isBlank()) {
+					this.id = user.getUserIdx(id, pw);
+					if (id.isBlank()) {
 						System.err.println("[로그인] 아이디또는 비밀번호를 확인하세요");
 						continue;
 					}
 				}
 				LoginMenu();
 			} else if (inp == 4) {
-				if (name.isBlank()) {
+				if (id.isBlank()) {
 					System.out.println("로그인 후 로그아웃 가능");
 					continue;
 				}
 				System.out.println("로그아웃....");
 				LogOut();
 			} else if (inp == 100) {
-				name = "관리자";
+				id = "관리자";
 				ManagerMenu();
 			}
 
@@ -113,12 +121,12 @@ public class ShopController {
 
 	// 로그아웃
 	private void LogOut() {
-		name = "";
+		id = "";
 	}
 
 	// 유저 출력
 	private void printUser() {
-		System.out.println(" === " + user.getName(name) + "님 환영합니다 ===");
+		System.out.println(" === " + user.getName(id) + "님 환영합니다 ===");
 	}
 
 	// 아이템 관리
@@ -267,7 +275,7 @@ public class ShopController {
 					continue;
 				}
 				String name = this.inp.getString("[회원 정보 수정]수정할 이름을 입력하세요");
-				user.UpdateUserName(inp, name);
+				user.UpdateUserName(user.getIdIdx(this.id), name);
 			}
 
 		}
@@ -276,7 +284,7 @@ public class ShopController {
 	// 관리자 메뉴
 	private void ManagerMenu() {
 		while (true) {
-			System.out.println(" === " + name + "님 환영합니다 ===");
+			System.out.println(" === " + id + "님 환영합니다 ===");
 
 			int inp = this.inp.getInt("[1.아이템관리] [2.카테고리관리] [3.장바구니관리] [4.유저관리] [5.데이터 저장] [6.데이터 불러오기] [0.뒤로가기] ");
 			if (inp == 0) {
@@ -299,13 +307,18 @@ public class ShopController {
 				UserManager();
 			} else if (inp == 5) {
 				// [5.데이터 저장]
-
+				f.SaveData(user.GetUserSaveData(), item.GetItemSaveData(), item.GetCartSaveData());
 			} else if (inp == 6) {
 				// [6.데이터 불러오기]
+				LoadData();
 			}
 		}
 	}
-
+	private void LoadData() {
+		user.SetUserData(f.UserLoadData());
+		item.SetItemData(f.ItemLoadData());
+		item.SetCartData(f.CartLoadData());
+	}
 	// 사용자 메뉴
 	private void LoginMenu() {
 		while (true) {
@@ -326,7 +339,7 @@ public class ShopController {
 					if (inp == 0) {
 						break;
 					}
-					item.NewCartData(name, inp);
+					item.NewCartData(id, inp);
 				}
 			} else if (inp == 2) {
 				// [2.장바구니목록]
@@ -344,24 +357,24 @@ public class ShopController {
 			} else if (CheckNum(inp, 4))
 				continue;
 
-			if (item.GetCartSize(name) == 0) {
+			if (item.GetCartSize(id) == 0) {
 				System.out.println("장바구니가 비었습니다.");
 				continue;
 			} else if (inp == 1) {
-				item.UserCartData(name);
+				item.UserCartData(id);
 			} else if (inp == 2) {
 				// [2.삭제]
 				while (true) {
-					if(item.GetCartSize(name) == 0) {
+					if(item.GetCartSize(id) == 0) {
 						System.out.println("장바구니가 비었습니다.");
 						break;
 					}
-					item.UserCartData(name);
+					item.UserCartData(id);
 					String itemname = this.inp.getString("[0.종료]\n[삭제]삭제하실 아이템 이름을 입력하세요");
 					if(itemname.equals("0")) {
 						break;
 					}
-					if (item.GetCartSize(name, itemname) == 0) {
+					if (item.GetCartSize(id, itemname) == 0) {
 						System.out.println(itemname + " 아이템 구매 내역이 없습니다!");
 						continue;
 					}
@@ -370,19 +383,19 @@ public class ShopController {
 						System.err.println("[삭제]1이상 입력해주세요");
 						continue;
 					}
-					else if (count > item.GetCartSize(name, itemname)) {
+					else if (count > item.GetCartSize(id, itemname)) {
 						System.err.println("[삭제]구매 수량 보다 많이 입력하셨습니다.");
 						continue;
 					}
-					item.DeleteCartItem(name, itemname, count);
-					System.out.println("[삭제]"+name+" "+count+"개 삭제 완료");
+					item.DeleteCartItem(id, itemname, count);
+					System.out.println("[삭제]"+id+" "+count+"개 삭제 완료");
 				}
 			} else if (inp == 3) {
 					//구입
-				item.UserCartData(name);
-				System.out.println("총 금액 : "+item.UserItemTotalPrice(name)+"원 입니다.");
+				item.UserCartData(id);
+				System.out.println("총 금액 : "+item.UserItemTotalPrice(id)+"원 입니다.");
 				int money = this.inp.getInt("[구입]지불 금액을 입력 해주세요");
-				int total  = item.UserItemTotalPrice(name);
+				int total  = item.UserItemTotalPrice(id);
 				if(money < 1) {
 					System.out.println("[구입]1원 이상 입력 해주세요");
 					continue;
@@ -392,18 +405,11 @@ public class ShopController {
 				}else if(money > total) {
 					System.out.println("[구입]"+(money - total)+"원을 반환합니다.");
 				}
-				item.DeleCartData(name);
+				item.DeleCartData(id);
 				System.out.println("[구입]구매 완료!");
 				
 			}
 		}
 
 	}
-// 	System.out.println("[1.아이템관리] [2.카테고리관리] [3.장바구니관리] [4.유저관리] [0.뒤로가기] ");
-	// System.out.println("[1.가입] [2.탈퇴] [3.로그인] [4.로그아웃]" + "\n[100.관리자] [0.종료] ");
-
-	// System.out.println("[1.쇼핑] [2.장바구니목록] [0.뒤로가기]");
-
-	// System.out.println("[1.내 장바구니] [2.삭제] [3.구입] [0.뒤로가기]");
 }
-// 	System.out.println("[1.아이템관리] [2.카테고리관리] [3.장바구니관리] [4.유저관리] [0.뒤로가기] ");

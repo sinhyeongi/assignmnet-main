@@ -227,4 +227,83 @@ public class ItemDAO {
 			}
 		}
 	}
+	public String GetItemSaveData() {
+		String s ="";
+		for(int i = 0 ; i < list.size(); i++) {
+			s += list.get(i).toString()+"\n";
+		}
+		if(!s.isBlank()) {
+			s = s.substring(0,s.length()-1);
+		}
+		if(!(GetCategorySaveData().isBlank()))
+			s += "\n+"+ GetCategorySaveData();
+		
+		return s;
+	}
+	public String GetCartSaveData() {
+		String s ="";
+		for(int i = 0 ; i < cartlist.size(); i++) {
+			s += cartlist.get(i).toString()+"\n";
+		}
+		if(!s.isBlank()) {
+			s = s.substring(0,s.length()-1);
+		}
+		
+		return s;
+	}
+	private String GetCategorySaveData() {
+		String s ="";
+		for(int i = 0 ; i < categorylist.size(); i++) {
+			s += categorylist.get(i)+"/";
+		}
+		if(!s.isBlank()) {
+			s = s.substring(0,s.length()-1);
+		}
+		return s;
+	}
+	public void SetItemData(String s) {
+		if(s.isBlank()) {
+			return;
+		}
+		if(list.size() != 0) {
+			list.clear();
+		}
+		String data[] ;
+		if(s.indexOf("+") != -1) {
+			String d = s.substring(s.indexOf("+")+1);
+			SetCategoryData(d);
+			s = s.substring(0,s.indexOf("+"));
+		}
+		data = s.split("\n");
+		for(int i = 0 ; i < data.length; i++) {
+			String sp[] = data[i].split("/");
+			list.add(new Item(sp[0], Integer.parseInt(sp[1]), sp[2]));
+		}
+	}
+	public void SetCartData(String s) {
+		if(s.isBlank()) {
+			return;
+		}
+		if(cartlist.size() != 0) {
+			cartlist.clear();
+		}
+		
+		String data[] = s.split("\n");
+		for(int i = 0 ; i < data.length; i++) {
+			String sp[] = data[i].split("/");
+			cartlist.add(new Cart(sp[0],sp[1]));
+		}
+	}
+	private void SetCategoryData(String s) {
+		if(s.isBlank()) {
+			return;
+		}
+		if(categorylist.size() != 0) {
+			categorylist.clear();
+		}
+		String data[] = s.split("/");
+		for(int i = 0 ; i < data.length; i++) {
+			categorylist.add(data[i]);
+		}
+	}
 }

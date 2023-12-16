@@ -77,4 +77,28 @@ public class UserDAO {
 		
 		return s;
 	}
+	public String GetUserSaveData() {
+		String s ="";
+		for(int i = 0 ; i < list.size(); i++) {
+			s += list.get(i).toString()+"\n";
+		}
+		if(!s.isBlank()) {
+			s = s.substring(0,s.length()-1);
+		}
+		return s;
+	}
+	
+	public void SetUserData(String s) {
+		if(s.isBlank()) {
+			return;
+		}
+		if(list.size() != 0) {
+			list.clear();
+		}
+		String data[] = s.split("\n");
+		for(int i = 0 ; i < data.length; i++) {
+			String u[] = data[i].split("/");
+			list.add(new User(u[0],u[1],u[2]));
+		}
+	}
 }
