@@ -23,6 +23,20 @@ public class UserDAO {
 				return i;
 		return -1;
 	}
+	//아이디 값에 해당하는 이름 반환
+	public String getName(String id) {
+		for(int i = 0 ; i < list.size(); i++)
+			if(id.equals(list.get(i).getId()))
+				return list.get(i).getName();
+		return "";
+	}
+	//로그인 성공시 아이디 반환
+	public String getUserIdx(String id,String pw){
+		for(int i = 0 ; i < list.size(); i++)
+			if(id.equals(list.get(i).getId()) && pw.equals(list.get(i).getPw()))
+				return list.get(i).getId();
+		return "";
+	}
 	//유저 수 리턴
 	public int getCountUser() {
 		return list.size();
@@ -36,4 +50,5 @@ public class UserDAO {
 		list.remove(idx);
 		System.out.println("[탈퇴]탈퇴 완료");
 	}
+	
 }
