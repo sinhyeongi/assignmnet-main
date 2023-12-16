@@ -214,20 +214,20 @@ public class ShopController {
 				continue;
 			}
 			if (inp == 1) {
-				if(item.GetCartSize() == 0) {
+				if (item.GetCartSize() == 0) {
 					System.err.println("no data");
 					continue;
 				}
 				item.PrintCart();
 			} else if (inp == 2) {
-				//[2] 회원별 장바구니
-				if(item.GetCartSize() == 0) {
+				// [2] 회원별 장바구니
+				if (item.GetCartSize() == 0) {
 					System.err.println("no data");
 					continue;
 				}
 				String data[] = user.GetAllUserId().split("/");
-				for(int i = 0; i < data.length; i++) {
-					System.out.println(" === "+user.getName(data[i])+" === ");
+				for (int i = 0; i < data.length; i++) {
+					System.out.println(" === " + user.getName(data[i]) + " === ");
 					item.UserCartData(data[i]);
 					System.out.println("=======================");
 				}
@@ -297,11 +297,11 @@ public class ShopController {
 			} else if (inp == 4) {
 				// [4.유저관리]
 				UserManager();
-			}else if (inp == 5) {
-				
-			}
-			else if (inp == 6) {
-				
+			} else if (inp == 5) {
+				// [5.데이터 저장]
+
+			} else if (inp == 6) {
+				// [6.데이터 불러오기]
 			}
 		}
 	}
@@ -316,10 +316,21 @@ public class ShopController {
 			} else if (CheckNum(inp, 4))
 				continue;
 			if (inp == 1) {
-				//[1.쇼핑]
-				
+				// [1.쇼핑]
+				while (true) {
+					item.PrintItem();
+					inp = this.inp.getInt("[0.종료]");
+					if (CheckNum(inp, item.GetItemSize())) {
+						continue;
+					}
+					if (inp == 0) {
+						break;
+					}
+					item.NewCartData(name, inp);
+				}
 			} else if (inp == 2) {
-				//[2.장바구니목록]
+				// [2.장바구니목록]
+				UserMenu();
 			}
 		}
 	}
@@ -333,6 +344,58 @@ public class ShopController {
 			} else if (CheckNum(inp, 4))
 				continue;
 
+			if (item.GetCartSize(name) == 0) {
+				System.out.println("장바구니가 비었습니다.");
+				continue;
+			} else if (inp == 1) {
+				item.UserCartData(name);
+			} else if (inp == 2) {
+				// [2.삭제]
+				while (true) {
+					if(item.GetCartSize(name) == 0) {
+						System.out.println("장바구니가 비었습니다.");
+						break;
+					}
+					item.UserCartData(name);
+					String itemname = this.inp.getString("[0.종료]\n[삭제]삭제하실 아이템 이름을 입력하세요");
+					if(itemname.equals("0")) {
+						break;
+					}
+					if (item.GetCartSize(name, itemname) == 0) {
+						System.out.println(itemname + " 아이템 구매 내역이 없습니다!");
+						continue;
+					}
+					int count = this.inp.getInt("[삭제]삭제하실 아이템 수량을 입력하세요");
+					if(count < 1) {
+						System.err.println("[삭제]1이상 입력해주세요");
+						continue;
+					}
+					else if (count > item.GetCartSize(name, itemname)) {
+						System.err.println("[삭제]구매 수량 보다 많이 입력하셨습니다.");
+						continue;
+					}
+					item.DeleteCartItem(name, itemname, count);
+					System.out.println("[삭제]"+name+" "+count+"개 삭제 완료");
+				}
+			} else if (inp == 3) {
+					//구입
+				item.UserCartData(name);
+				System.out.println("총 금액 : "+item.UserItemTotalPrice(name)+"원 입니다.");
+				int money = this.inp.getInt("[구입]지불 금액을 입력 해주세요");
+				int total  = item.UserItemTotalPrice(name);
+				if(money < 1) {
+					System.out.println("[구입]1원 이상 입력 해주세요");
+					continue;
+				}else if(money < total) {
+					System.out.println("[구입]"+(total - money)+"원 부족합니다!");
+					continue;
+				}else if(money > total) {
+					System.out.println("[구입]"+(money - total)+"원을 반환합니다.");
+				}
+				item.DeleCartData(name);
+				System.out.println("[구입]구매 완료!");
+				
+			}
 		}
 
 	}

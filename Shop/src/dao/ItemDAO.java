@@ -36,6 +36,26 @@ public class ItemDAO {
 	public int GetCartSize() {
 		return cartlist.size();
 	}
+	//카트에서 아이디값으로 있는 갯수 리턴
+	public int GetCartSize(String id) {
+		int count = 0;
+		for(int i = 0 ; i < cartlist.size(); i++) {
+			if(cartlist.get(i).getUserId().equals(id)) {
+				count++;
+			}
+		}
+		return count;
+	}
+	//카트에서 아이디와 아이템 이름이 같은 갯수 리턴
+	public int GetCartSize(String id,String name) {
+		int count = 0;
+		for(int i = 0 ; i < cartlist.size(); i++) {
+			if(cartlist.get(i).getUserId().equals(id) && name.equals(cartlist.get(i).getItemName())) {
+				count++;
+			}
+		}
+		return count;
+	}
 	// 아이템 이름에 해당 인덱스 리턴
 	public int GetItemIdx(String name) {
 		for (int i = 0; i < list.size(); i++) {
@@ -125,7 +145,13 @@ public class ItemDAO {
 			System.out.println(cartlist.get(i).getUserId() + "\t" + cartlist.get(i).getItemName());
 		}
 	}
-
+	public void PrintCart(String id) {
+		System.out.println("구매자\t아이템 이름");
+		for (int i = 0; i < cartlist.size(); i++) {
+			if(id.equals(cartlist.get(i).getUserId()))
+				System.out.println(cartlist.get(i).getUserId() + "\t" + cartlist.get(i).getItemName());
+		}
+	}
 	// 새로운 아이템 추가
 	public void NewItem(String name, String category, int price) {
 		list.add(new Item(name, price, category));
@@ -141,10 +167,11 @@ public class ItemDAO {
 	}
 	//회원 아이디별 카트 출력
 	public void UserCartData(String userId) {
+		int sum = 0;
 		for(int i = 0 ; i < list.size(); i++) {
 			String s = list.get(i).getName() + "\t";
 			int count = 0;
-			int sum = 0;
+			
 			for(int i2 = 0 ; i2 < cartlist.size();i2++) {
 				if(cartlist.get(i2).getUserId().equals(userId) && list.get(i).getName().equals(cartlist.get(i2).getItemName())) {
 					count++;
@@ -152,8 +179,51 @@ public class ItemDAO {
 				}
 			}
 			if(count != 0) {
-				s += "구매 수량 : "+count +"\t 총금액 :"+sum+"원";
+				s += "구매 수량 : "+count ;
 				System.out.println(s);
+			}
+		}
+		if(sum != 0) {
+			System.out.println("총금액 :"+sum+"원");
+		}
+	}
+	public int UserItemTotalPrice(String id) {
+		int sum = 0;
+		for(int i = 0 ; i < list.size(); i++) {
+			for(int i2 = 0 ; i2 < cartlist.size(); i2++) {
+				if(cartlist.get(i2).getItemName().equals(list.get(i).getName()) && cartlist.get(i2).getUserId().equals(id)) {
+					sum += list.get(i).getPrice();
+				}
+			}
+		}
+		return sum;
+	}
+	//구매시 카트에 추가
+	public void NewCartData(String id,int idx) {
+		cartlist.add(new Cart(id ,list.get(idx - 1).getName()));
+		System.out.println(list.get(idx - 1).getName()+" 1개 구매 완료");
+	}
+	//아이디와 아이템 이름이 같은것 입력받은 수량 만큼 삭제
+	public void DeleteCartItem(String id,String name ,int count) {
+		for(int i = 0 ; i < count; i++) {
+			for(int i2 = 0 ; i2 < cartlist.size(); i2++) {
+				if(id.equals(cartlist.get(i2).getUserId()) && name.equals(cartlist.get(i2).getItemName())) {
+					cartlist.remove(i2);
+					break;
+				}
+			}
+		}
+	}
+	//해당 아이디 카트 삭제
+	public void DeleCartData(String id) {
+		for(int i = 0 ; i < cartlist.size(); i++) {
+			if(id.equals(cartlist.get(i).getUserId())) {
+				if(cartlist.size() == 1) {
+					cartlist.clear();
+					break;
+				}
+				cartlist.remove(i);
+				i--;
 			}
 		}
 	}
