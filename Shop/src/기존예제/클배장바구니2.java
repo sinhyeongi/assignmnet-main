@@ -82,7 +82,7 @@ public class 클배장바구니2 {
 					System.out.println("[1] 아이템 추가 [2] 아이템 삭제 [3] 최신순(주문정보) [4] 로그아웃 ");
 				} else {
 					System.out.println("[ 사용자 메뉴 ]");
-					System.out.println("[" + logUser.id + " 로그인]");
+					System.out.println("[" + logUser.getId() + " 로그인]");
 
 					System.out.println(" [1] 쇼핑 [2] 주문확인 [3] 탈퇴(그 회원 주문서 동시에 삭제) [4] 로그아웃");
 				}
@@ -177,7 +177,7 @@ public class 클배장바구니2 {
 					}
 					System.out.printf("%s %s %n", "회원아이디", "상품 이름");
 					for (int i = cartSize - 1; i >= 0; i -= 1) {
-						System.out.printf("(%d) %s %s %n", cartSize - 1 - i, cartList[i].getuserId, cartList[i].itemName);
+						System.out.printf("(%d) %s %s %n", cartSize - 1 - i, cartList[i].getUserId(), cartList[i].getItemName());
 					}
 
 				}
@@ -187,7 +187,7 @@ public class 클배장바구니2 {
 					for (Item i : itemList) {
 						if (i == null)
 							break;
-						System.out.printf("(%d) %s %d원 %n", 1 + idx++, i.name, i.price);
+						System.out.printf("(%d) %s %d원 %n", 1 + idx++, i.getName(), i.getPrice());
 					}
 					System.out.println("============");
 

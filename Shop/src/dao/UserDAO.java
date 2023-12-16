@@ -47,8 +47,34 @@ public class UserDAO {
 	}
 	//유저 삭제
 	public void DeleteUser(int idx) {
-		list.remove(idx);
+		if(list.size() == 1) {
+			list.clear();
+		}else {	
+			list.remove(idx);
+		}
 		System.out.println("[탈퇴]탈퇴 완료");
 	}
-	
+	//유저 출력
+	public void PrintUser() {
+		System.out.printf("%6s\t%6s\t%6s\n","이름","아이디","비밀번호");
+		for(int i = 0 ; i < list.size(); i++) {
+			System.out.printf("%6s\t%6s\t%6s\n",list.get(i).getName(),list.get(i).getId(),list.get(i).getPw());
+		}
+	}
+	//유저 이름 업데이트
+	public void UpdateUserName(int idx,String name) {
+		list.set(idx, new User(list.get(idx).getId(), list.get(idx).getPw(), name));
+		System.out.println("[회원 정보 수정 완료");
+		System.out.println(list.get(idx).getId() +" "+list.get(idx).getPw()+" "+list.get(idx).getName());
+	}
+	public String GetAllUserId() {
+		String s = "";
+		for(int i = 0 ; i < list.size();i++) {
+			s += list.get(i).getId()+"/";
+		}
+		if(s.length() > 1)
+			s = s.substring(0,s.length() -1);
+		
+		return s;
+	}
 }
