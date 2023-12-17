@@ -49,9 +49,9 @@ public class UserDAO {
 	public void DeleteUser(int idx) {
 		if(list.size() == 1) {
 			list.clear();
-		}else {	
-			list.remove(idx);
-		}
+			return;
+		}	
+		list.remove(idx);
 		System.out.println("[탈퇴]탈퇴 완료");
 	}
 	//유저 출력
@@ -67,6 +67,7 @@ public class UserDAO {
 		System.out.println("[회원 정보 수정 완료");
 		System.out.println(list.get(idx).getId() +" "+list.get(idx).getPw()+" "+list.get(idx).getName());
 	}
+	//전체 아이디 리턴
 	public String GetAllUserId() {
 		String s = "";
 		for(int i = 0 ; i < list.size();i++) {
@@ -77,6 +78,7 @@ public class UserDAO {
 		
 		return s;
 	}
+	//세이브 데이터 리턴
 	public String GetUserSaveData() {
 		String s ="";
 		for(int i = 0 ; i < list.size(); i++) {
@@ -87,7 +89,7 @@ public class UserDAO {
 		}
 		return s;
 	}
-	
+	//데이터 로드
 	public void SetUserData(String s) {
 		if(s.isBlank()) {
 			return;

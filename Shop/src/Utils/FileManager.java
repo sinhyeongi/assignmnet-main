@@ -19,6 +19,8 @@ public class FileManager {
 	private final File cart = new File(PATH+"cart.txt");
 	private final File user = new File(PATH+"user.txt");
 	private final File item = new File(PATH+"item.txt");
+	
+	
 	public static FileManager getInstance() {
 		if(instance == null) 
 			instance = new FileManager();
@@ -37,6 +39,7 @@ public class FileManager {
 			e.printStackTrace();
 		}
 	}
+	//유저 데이터 로드
 	public String UserLoadData() {
 		String s = "";
 		try(BufferedReader bf = new BufferedReader(new FileReader(this.user))) {
@@ -53,6 +56,7 @@ public class FileManager {
 		}
 		return s;
 	}
+	//아이템 데이터 로드
 	public String ItemLoadData() {
 		String s = "";
 		try(BufferedReader bf = new BufferedReader(new FileReader(this.item))) {
@@ -69,6 +73,7 @@ public class FileManager {
 		}
 		return s;
 	}
+	//카트 데이터 로드
 	public String CartLoadData() {
 		String s = "";
 		try(BufferedReader bf = new BufferedReader(new FileReader(this.cart))) {
@@ -85,6 +90,7 @@ public class FileManager {
 		}
 		return s;
 	}
+	//파일 세이브
 	public void SaveData(String user,String item, String cart) {
 		if(user.isBlank()) {
 			System.out.println("저장할 데이터가 없습니다!");
